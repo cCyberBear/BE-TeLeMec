@@ -2,6 +2,7 @@ const catchAsync = require("../middlewares/async");
 const { UserConversation, Conversation, User } = require("../models");
 const ApiError = require("../utils/ApiError");
 const _ = require("lodash");
+const { Op } = require("sequelize");
 
 exports.createConversaion = catchAsync(async (req, res) => {
   const userId = req.user.id;
@@ -72,9 +73,9 @@ exports.getAllConversation = catchAsync(async (req, res) => {
             ],
           },
         ],
-        order: [["updatedAt", "ASC"]],
       },
     ],
+    order: [["conversation", "updatedAt", "DESC"]],
   });
   function convertArray(a) {
     const result = [];
@@ -97,4 +98,34 @@ exports.getAllConversation = catchAsync(async (req, res) => {
   }
 
   res.json(convertArray(data));
+});
+exports.getAllUserNotAdd = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+
+  const conversationRaw = await UserConversation.findAll({
+    where: {
+      userId,
+    },
+  });
+  const arrayConversationId = _.map(
+    conversationRaw,
+    (item) => item.dataValues.conversationId
+  );
+  console.log(
+    "🚀 ~ exports.getAllUserNotAdd=catchAsync ~ arrayConversationId:",
+    arrayConversationId
+  );
+
+  const data = await User.findAll({
+    attributes: ["id", "fullName", "email"],
+    require: false,
+    include: [
+      {
+        model: UserConversation,
+        as: "user",
+      },
+    ],
+  });
+
+  res.json(data);
 });

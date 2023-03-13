@@ -1,23 +1,23 @@
 {
   "development": {
-    "username": "freedb_khuongduy",
-    "password": "DMTVVSQk@H3vm@!",
-    "database": "freedb_khuongduy",
-    "host": "sql.freedb.tech",
+    "username": "khuongduy",
+    "password": "khuongduy",
+    "database": "telemec",
+    "host": "db4free.net",
     "dialect": "mysql"
   },
   "test": {
-    "username": "freedb_khuongduy",
-    "password": "DMTVVSQk@H3vm@!",
-    "database": "freedb_khuongduy",
-    "host": "sql.freedb.tech",
+    "username": "khuongduy",
+    "password": "khuongduy",
+    "database": "telemec",
+    "host": "db4free.net",
     "dialect": "mysql"
   },
   "production": {
-    "username": "freedb_khuongduy",
-    "password": "DMTVVSQk@H3vm@!",
-    "database": "freedb_khuongduy",
-    "host": "sql.freedb.tech",
+    "username": "khuongduy",
+    "password": "khuongduy",
+    "database": "telemec",
+    "host": "db4free.net",
     "dialect": "mysql"
   }
 }
