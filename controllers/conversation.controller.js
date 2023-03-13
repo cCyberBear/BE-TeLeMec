@@ -7,6 +7,10 @@ const { Op } = require("sequelize");
 exports.createConversaion = catchAsync(async (req, res) => {
   const userId = req.user.id;
   const { friendId } = req.body;
+  console.log(
+    "🚀 ~ file: conversation.controller.js:10 ~ exports.createConversaion=catchAsync ~ friendId:",
+    userId
+  );
   if (userId === friendId) throw new ApiError(500, "Wrong");
   const checkFraw = await UserConversation.findAll({ where: { userId } });
   const checkSraw = await UserConversation.findAll({
@@ -27,21 +31,10 @@ exports.createConversaion = catchAsync(async (req, res) => {
     lastestMessage: "Click to chat !!!",
   });
 
-  await UserConversation.bulkCreate(
-    [
-      {
-        conversationId: newConversation.dataValues.id,
-        userId: friendId,
-      },
-      {
-        conversationId: newConversation.dataValues.id,
-        userId,
-      },
-    ],
-    {
-      returning: true,
-    }
-  );
+  const me = await User.findByPk(userId);
+  const fr = await User.findByPk(friendId);
+  await newConversation.addUser(me);
+  await newConversation.addUser(fr);
 
   res.json({
     success: true,
@@ -101,31 +94,48 @@ exports.getAllConversation = catchAsync(async (req, res) => {
 });
 exports.getAllUserNotAdd = catchAsync(async (req, res) => {
   const userId = req.user.id;
-
-  const conversationRaw = await UserConversation.findAll({
-    where: {
-      userId,
-    },
-  });
-  const arrayConversationId = _.map(
-    conversationRaw,
-    (item) => item.dataValues.conversationId
-  );
-  console.log(
-    "🚀 ~ exports.getAllUserNotAdd=catchAsync ~ arrayConversationId:",
-    arrayConversationId
-  );
-
-  const data = await User.findAll({
-    attributes: ["id", "fullName", "email"],
-    require: false,
+  const { string } = req.query;
+  const conversations = await User.findByPk(userId, {
+    attributes: ["id"],
     include: [
       {
-        model: UserConversation,
-        as: "user",
+        attributes: ["id"],
+        model: Conversation,
+        through: { attributes: [] },
+        include: [
+          {
+            attributes: ["id"],
+            model: User,
+            through: { attributes: [] },
+          },
+        ],
       },
     ],
   });
+  const userIds = conversations
+    .toJSON()
+    .Conversations.flatMap((conversation) => conversation.Users)
+    .map((user) => user.id)
+    .filter((id) => id !== userId);
 
-  res.json(data);
+  const users = await User.findAll({
+    where: {
+      id: { [Op.not]: userId },
+      [Op.not]: { id: userIds },
+      [Op.or]: [
+        {
+          fullName: {
+            [Op.like]: string !== "" ? `%${string}%` : "%%",
+          },
+        },
+        {
+          email: {
+            [Op.like]: string !== "" ? `%${string}%` : "%%",
+          },
+        },
+      ],
+    },
+  });
+
+  res.json(users);
 });

@@ -21,3 +21,26 @@ const a = {
     dialect: "mysql",
   },
 };
+const b = {
+  development: {
+    username: "khuongduy",
+    password: "khuongduy",
+    database: "telemec",
+    host: "db4free.net",
+    dialect: "mysql",
+  },
+  test: {
+    username: "khuongduy",
+    password: "khuongduy",
+    database: "telemec",
+    host: "db4free.net",
+    dialect: "mysql",
+  },
+  production: {
+    username: "khuongduy",
+    password: "khuongduy",
+    database: "telemec",
+    host: "db4free.net",
+    dialect: "mysql",
+  },
+};
