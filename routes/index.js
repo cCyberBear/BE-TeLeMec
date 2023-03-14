@@ -4,6 +4,7 @@ const { router: patientRoute } = require("./patientRoute");
 const { router: doctorRoute } = require("./doctorRoute");
 const { router: conversationRoute } = require("./conversationRoute");
 const { router: messageRoute } = require("./messageRoute");
+const { router: postRoute } = require("./postRoute");
 
 const rootRouter = express.Router();
 
@@ -12,6 +13,7 @@ rootRouter.use("/patient", patientRoute);
 rootRouter.use("/doctor", doctorRoute);
 rootRouter.use("/conversation", conversationRoute);
 rootRouter.use("/message", messageRoute);
+rootRouter.use("/post", postRoute);
 
 module.exports = {
   rootRouter,
