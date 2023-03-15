@@ -1,8 +1,4 @@
-// const { PatientPostBinaryObject, DoctorBinaryObject } = require("./models");
 const stream = require("stream");
-const catchAsync = require("./middlewares/async");
-const ApiError = require("./utils/ApiError");
-const fs = require("fs");
 require("dotenv").config();
 const express = require("express");
 const { sequelize } = require("./models");
@@ -19,56 +15,55 @@ app.use(express.json());
 const http = require("http");
 const path = require("path");
 const { socketChat } = require("./utils/socket");
+const { default: axios } = require("axios");
+const catchAsync = require("./middlewares/async");
 const server = http.createServer(app);
 
-//////////////////////////////////
-
-app.use(express.static(path.join(__dirname, "build")));
-app.get(/^\/(?!.*api)/, (req, res) => {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
-});
 app.use("/api", rootRouter);
-// app.get(
-//   "/api/image-doctor/:id",
-//   catchAsync(async (req, res) => {
-//     const data = await DoctorBinaryObject.findByPk(req.params.id);
-//     if (!data) {
-//       throw new ApiError(404, "Image not found");
-//     }
-//     if (data.dataValues.bytes === null) {
-//       const defaut = fs.readFileSync("./assets/ava.jpeg");
-//       return res.send(Buffer.from(defaut));
-//     }
-//     const bufferStream = new stream.PassThrough();
-//     bufferStream.end(Buffer.from(data.dataValues.bytes)).pipe(res);
-//   })
-// );
-// app.get(
-//   "/api/css/:id",
-//   catchAsync(async (req, res) => {
-//     const data = await CssFile.findByPk(req.params.id);
-//     if (!data) {
-//       throw new ApiError(404, "Image not found");
-//     }
-//     const bufferStream = new stream.PassThrough();
-//     bufferStream.end(Buffer.from(data.dataValues.CssFile)).pipe(res);
-//   })
-// );
-// app.get(
-//   "/api/download/css/:id",
-//   catchAsync(async (req, res) => {
-//     const data = await CssFile.findByPk(req.params.id);
-//     if (!data) {
-//       throw new ApiError(404, "Image not found");
-//     }
-//     res.set(
-//       "Content-disposition",
-//       "attachment; filename=" + data.dataValues.Name
-//     );
-//     res.set("Content-Type", "text/plain");
-//     res.send(Buffer.from(data.dataValues.CssFile));
-//   })
-// );
+
+app.get(
+  "/api/chat",
+  catchAsync(async (req, res) => {
+    res.writeHead(200, {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      Connection: "keep-alive",
+    });
+
+    const { q } = req.query;
+
+    if (!q) {
+      return res.end();
+    }
+
+    const response = await axios.post(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: q }],
+        stream: true,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        },
+        responseType: "stream",
+      }
+    );
+
+    const stream = response.data;
+
+    stream.on("data", (chunk) => {
+      const chunkString = chunk.toString();
+      res.write(chunkString);
+    });
+
+    stream.on("error", (error) => {
+      console.log(error);
+    });
+  })
+);
 app.use(catchError);
 
 const io = new Server(server, {
