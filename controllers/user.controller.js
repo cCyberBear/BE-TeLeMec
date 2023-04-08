@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const { User, PatientDetail, DoctorDetail } = require("../models");
 const { Op } = require("sequelize");
 const ApiError = require("../utils/ApiError");
+const { ifft } = require("@tensorflow/tfjs");
 
 exports.userWithGoogle = catchAsync(async (req, res) => {
   const { email, firstName, lastName, fullName, photoUrl } =
@@ -46,6 +47,7 @@ exports.userWithGoogle = catchAsync(async (req, res) => {
   const token = jwt.sign(
     {
       id: user.dataValues.id,
+      isPatient: user.dataValues.isPatient,
     },
     process.env.SECRET,
     {
@@ -108,6 +110,7 @@ exports.userWithFacebook = catchAsync(async (req, res) => {
   const token = jwt.sign(
     {
       id: user.dataValues.id,
+      isPatient: user.dataValues.isPatient,
     },
     process.env.SECRET,
     {
@@ -143,7 +146,6 @@ exports.me = catchAsync(async (req, res) => {
     user: user,
   });
 });
-
 exports.updateUser = catchAsync(async (req, res) => {
   let userId = req.user.id;
   if (req.body?.email) {
@@ -168,12 +170,34 @@ exports.updateUser = catchAsync(async (req, res) => {
     });
     if (check) throw new ApiError(500, "Phone number is already in used");
   }
-  await User.update(req.body, {
-    where: {
-      id: userId,
-    },
-  });
+  await User.update(
+    { ...req.body, fullName: req.body.firstName + " " + req.body.lastName },
+    {
+      where: {
+        id: userId,
+      },
+    }
+  );
   res.status(200).json({
     success: true,
   });
+});
+exports.getDoctorById = catchAsync(async (req, res) => {
+  let { userId } = req.params;
+  console.log("🚀 ~ exports.getDoctorById=catchAsync ~ userId:", userId);
+  const user = await User.findOne({
+    where: {
+      id: userId,
+    },
+    include: [
+      {
+        model: DoctorDetail,
+        as: "details_doctor",
+      },
+    ],
+  });
+  if (!user) throw new ApiError(404, "Not found any doctor");
+  if (user.dataValues.isPatient)
+    throw new ApiError(404, "Not found any doctor");
+  res.status(200).json(user);
 });
