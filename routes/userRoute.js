@@ -6,14 +6,16 @@ const {
   me,
   updateUser,
   getDoctorById,
+  getAllDoctor,
 } = require("../controllers/user.controller");
 
 const router = express.Router();
 
-router.get("/doctor/:userId", getDoctorById);
 router.post("/fb", userWithFacebook);
 router.post("/gg", userWithGoogle);
 router.get("/me", me);
 router.patch("/", jwtAuth, updateUser);
 
+router.get("/doctor", getAllDoctor);
+router.get("/doctor/:userId", getDoctorById);
 module.exports = { router };

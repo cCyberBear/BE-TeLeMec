@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const { User, PatientDetail, DoctorDetail } = require("../models");
 const { Op } = require("sequelize");
 const ApiError = require("../utils/ApiError");
-const { ifft } = require("@tensorflow/tfjs");
 
 exports.userWithGoogle = catchAsync(async (req, res) => {
   const { email, firstName, lastName, fullName, photoUrl } =
@@ -199,5 +198,21 @@ exports.getDoctorById = catchAsync(async (req, res) => {
   if (!user) throw new ApiError(404, "Not found any doctor");
   if (user.dataValues.isPatient)
     throw new ApiError(404, "Not found any doctor");
+  res.status(200).json(user);
+});
+
+exports.getAllDoctor = catchAsync(async (req, res) => {
+  const user = await User.findAll({
+    where: {
+      isPatient: false,
+    },
+    include: [
+      {
+        model: DoctorDetail,
+        as: "details_doctor",
+      },
+    ],
+    attributes: ["id", "fullname", "image"],
+  });
   res.status(200).json(user);
 });
