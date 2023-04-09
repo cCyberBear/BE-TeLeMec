@@ -1,29 +1,36 @@
+const { Op } = require("sequelize");
 const catchAsync = require("../middlewares/async");
 const { Booking, User, PatientDetail, DoctorDetail } = require("../models");
 const ApiError = require("../utils/ApiError");
+const moment = require("moment");
 
 exports.createBooking = catchAsync(async (req, res) => {
   const { doctorId, bookingFrom, bookingTo } = req.body;
   if (!(doctorId && bookingFrom && bookingTo)) {
     throw new ApiError(500, "Please enter enough information");
   }
-  const patientId = req.user.id;
-
+  const currentId = req.user.id;
+  const currentUser = await User.findByPk(currentId);
+  if (!currentUser.dataValues.isPatient)
+    throw new ApiError(
+      500,
+      "Please make sure your are patient to make an appointment"
+    );
   const data = await Booking.create({
     doctorId,
     bookingFrom,
     bookingTo,
-    patientId,
+    patientId: currentId,
     bookingStatus: 1,
   });
-  res.json({
-    success: true,
-    data,
-  });
+  res.json(data);
 });
 exports.getAllBooking = catchAsync(async (req, res) => {
   const userId = req.user.id;
-  const condition = req.user.isPatient
+
+  const user = await User.findByPk(userId);
+
+  const condition = user.dataValues.isPatient
     ? {
         where: {
           patientId: userId,
@@ -89,6 +96,20 @@ exports.getAllBooking = catchAsync(async (req, res) => {
       };
 
   const data = await Booking.findAll(condition);
+
+  res.json(data);
+});
+exports.getAllBookingByDoctorId = catchAsync(async (req, res) => {
+  const { doctorId } = req.params;
+
+  const data = await Booking.findAll({
+    where: {
+      doctorId,
+      bookingTo: {
+        [Op.gt]: moment().utc(),
+      },
+    },
+  });
 
   res.json(data);
 });
