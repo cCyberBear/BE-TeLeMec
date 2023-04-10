@@ -35,33 +35,32 @@ app.get(
     if (!q) {
       return res.end();
     }
-
-    const response = await axios.post(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: q }],
-        stream: true,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+    try {
+      const response = await axios.post(
+        "https://api.openai.com/v1/chat/completions",
+        {
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: q }],
+          stream: true,
         },
-        responseType: "stream",
-      }
-    );
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          },
+          responseType: "stream",
+        }
+      );
 
-    const stream = response.data;
+      const stream = response.data;
 
-    stream.on("data", (chunk) => {
-      const chunkString = chunk.toString();
-      res.write(chunkString);
-    });
-
-    stream.on("error", (error) => {
-      console.log(error);
-    });
+      stream.on("data", (chunk) => {
+        const chunkString = chunk.toString();
+        res.write(chunkString);
+      });
+    } catch (error) {
+      console.log("🚀 ~ catchAsync ~ error:", error);
+    }
   })
 );
 app.use(catchError);

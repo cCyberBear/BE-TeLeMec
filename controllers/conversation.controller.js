@@ -121,7 +121,7 @@ exports.getAllUserNotAdd = catchAsync(async (req, res) => {
   const users = await User.findAll({
     where: {
       id: { [Op.not]: userId },
-      [Op.not]: { id: userIds },
+      [Op.not]: { id: userIds?.length ? userIds : userId },
       [Op.or]: [
         {
           fullName: {
