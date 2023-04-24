@@ -67,7 +67,11 @@ app.use(catchError);
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000", "https://telemec.vercel.app"],
+    origin: [
+      "http://localhost:3000",
+      "https://telemec.vercel.app",
+      "https://telemec.vnkd.dev",
+    ],
     methods: ["GET", "POST"],
   },
 });
