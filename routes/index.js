@@ -7,6 +7,7 @@ const { router: messageRoute } = require("./messageRoute");
 const { router: postRoute } = require("./postRoute");
 const { router: bookingRoute } = require("./bookingRoute");
 const { router: bookingStatusRoute } = require("./bookingStatusRoute");
+const { router: indexHumanRoute } = require("./indexHumanRoute");
 
 const rootRouter = express.Router();
 
@@ -18,6 +19,7 @@ rootRouter.use("/message", messageRoute);
 rootRouter.use("/post", postRoute);
 rootRouter.use("/booking", bookingRoute);
 rootRouter.use("/booking-status", bookingStatusRoute);
+rootRouter.use("/index-human", indexHumanRoute);
 
 module.exports = {
   rootRouter,
