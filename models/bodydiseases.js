@@ -147,6 +147,7 @@ module.exports = (sequelize, DataTypes) => {
       yellow_urine: DataTypes.INTEGER,
       yellowing_of_eyes: DataTypes.INTEGER,
       yellowish_skin: DataTypes.INTEGER,
+      userId: DataTypes.INTEGER,
     },
     {
       sequelize,
