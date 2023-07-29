@@ -27,13 +27,14 @@ exports.createBooking = catchAsync(async (req, res) => {
 });
 exports.getAllBooking = catchAsync(async (req, res) => {
   const userId = req.user.id;
-
+  const { status } = req.query;
   const user = await User.findByPk(userId);
 
   const condition = user.dataValues.isPatient
     ? {
         where: {
           patientId: userId,
+          bookingStatus: status,
         },
         include: [
           {
@@ -62,6 +63,7 @@ exports.getAllBooking = catchAsync(async (req, res) => {
     : {
         where: {
           doctorId: userId,
+          bookingStatus: status,
         },
         distinct: true,
         include: [
@@ -113,3 +115,40 @@ exports.getAllBookingByDoctorId = catchAsync(async (req, res) => {
 
   res.json(data);
 });
+exports.cancelBooking = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const data = await Booking.update(
+    {
+      bookingStatus: 3,
+    },
+    {
+      where: {
+        id,
+      },
+    }
+  );
+
+  res.json(data);
+});
+exports.checkBooking = async () => {
+  try {
+    await Booking.update(
+      {
+        bookingStatus: 2,
+      },
+      {
+        where: {
+          bookingStatus: 1,
+          bookingTo: {
+            [Op.lte]: moment().utc(),
+          },
+        },
+      }
+    );
+  } catch (error) {
+    console.log(
+      "🚀 ~ file: booking.controller.js:149 ~ exports.checkBooking= ~ error:",
+      error
+    );
+  }
+};

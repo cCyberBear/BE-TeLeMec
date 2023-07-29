@@ -7,6 +7,7 @@ const catchError = require("./middlewares/error");
 const { rootRouter } = require("./routes");
 const app = express();
 const { Server } = require("socket.io");
+const cron = require("node-cron");
 
 app.use(cors());
 app.use(express.json());
@@ -17,6 +18,7 @@ const path = require("path");
 const { socketChat } = require("./utils/socket");
 const { default: axios } = require("axios");
 const catchAsync = require("./middlewares/async");
+const { checkBooking } = require("./controllers/booking.controller");
 const server = http.createServer(app);
 
 app.use("/api", rootRouter);
@@ -82,6 +84,15 @@ server.listen(process.env.PORT || 3001, async () => {
   try {
     await sequelize.authenticate();
     console.log("Connection has been established successfully.");
+    cron.schedule(
+      "* * * * *",
+      async () => {
+        await Promise.all([checkBooking()]);
+      },
+      {
+        timezone: "Asia/Ho_Chi_Minh",
+      }
+    );
   } catch (error) {
     console.error("Unable to connect to the database:", error);
   }
