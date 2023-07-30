@@ -1,6 +1,7 @@
 const catchAsync = require("../middlewares/async");
-const { BodyIndexData, BodyDiseases } = require("../models");
+const { BodyIndexData, BodyDiseases, Sequelize } = require("../models");
 const ApiError = require("../utils/ApiError");
+const moment = require("moment");
 
 exports.createBodyIndexData = catchAsync(async (req, res) => {
   const userId = req.user.id;
@@ -41,6 +42,42 @@ exports.createBodyIndexData = catchAsync(async (req, res) => {
     userId,
   });
   res.send(data);
+});
+exports.getBodyIndexData = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const numberOfDay = 30;
+  const startDate = moment()
+    .subtract(numberOfDay - 1, "days")
+    .startOf("day");
+  const endDate = moment().add(1, "days").endOf("day");
+  const bodyData = await BodyIndexData.findAll({
+    where: {
+      userId,
+      createdAt: {
+        [Sequelize.Op.between]: [startDate.toDate(), endDate.toDate()],
+      },
+    },
+    raw: true,
+  });
+  const result = [];
+  for (let i = 0; i < numberOfDay; i++) {
+    const date = moment(startDate).add(i, "days").format("DD/MM/YYYY");
+    const body = bodyData.find(
+      (b) => moment(b.createdAt).format("DD/MM/YYYY") === date
+    );
+    result.push({
+      DBP: 84,
+      SBP: 145,
+      Glucose: 98,
+      SpO2: 92,
+      Temperature: 37.4,
+      TemperatureInF: 96.8,
+      ...body,
+      Date: date,
+    });
+  }
+
+  res.send(result);
 });
 exports.createBodyDiseases = catchAsync(async (req, res) => {
   const userId = req.user.id;

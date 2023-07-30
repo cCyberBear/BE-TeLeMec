@@ -4,7 +4,7 @@ const ApiError = require("../utils/ApiError");
 
 exports.createDoctorDetail = catchAsync(async (req, res) => {
   const userId = req.user.id;
-  const { experiences, graduated, introduction, skill } = req.body;
+  const { experiences, graduated, introduction, skill, image } = req.body;
 
   const check = await DoctorDetail.findOne({ where: { userId } });
   if (check) {
@@ -14,6 +14,7 @@ exports.createDoctorDetail = catchAsync(async (req, res) => {
         graduated,
         introduction,
         skill,
+        image,
       },
       {
         where: {
@@ -31,6 +32,7 @@ exports.createDoctorDetail = catchAsync(async (req, res) => {
     graduated,
     introduction,
     skill,
+    image,
   });
   res.json({
     success: true,
