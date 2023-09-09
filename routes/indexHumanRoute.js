@@ -6,12 +6,16 @@ const {
   getDiseases,
   getDiseasesById,
   getBodyIndexData,
+  getBodyIndexDataTable,
+  getBodyIndexDataTableById,
 } = require("../controllers/indexhuman.controller");
 
 const router = express.Router();
 
 router.post("/", jwtAuth, createBodyIndexData);
 router.get("/", jwtAuth, getBodyIndexData);
+router.get("/table", jwtAuth, getBodyIndexDataTable);
+router.get("/table/:id", jwtAuth, getBodyIndexDataTableById);
 router.post("/di", jwtAuth, createBodyDiseases);
 router.get("/di", jwtAuth, getDiseases);
 router.get("/di/:id", jwtAuth, getDiseasesById);

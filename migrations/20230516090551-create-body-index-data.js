@@ -29,7 +29,16 @@ module.exports = {
       timeMessure: {
         type: Sequelize.DATE,
       },
-      health_status: {
+      heart_rate: {
+        type: Sequelize.INTEGER,
+      },
+      health_status1: {
+        type: Sequelize.INTEGER,
+      },
+      health_status2: {
+        type: Sequelize.INTEGER,
+      },
+      health_status3: {
         type: Sequelize.INTEGER,
       },
       userId: {

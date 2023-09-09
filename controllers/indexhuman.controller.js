@@ -13,7 +13,10 @@ exports.createBodyIndexData = catchAsync(async (req, res) => {
     Temperature,
     TemperatureInF,
     timeMessure,
-    health_status,
+    heart_rate,
+    health_status1,
+    health_status2,
+    health_status3,
   } = req.body;
 
   if (
@@ -25,7 +28,10 @@ exports.createBodyIndexData = catchAsync(async (req, res) => {
       Temperature ||
       TemperatureInF ||
       timeMessure ||
-      health_status
+      heart_rate ||
+      health_status1 ||
+      health_status2 ||
+      health_status3
     )
   ) {
     throw new ApiError(500, "Something is missing");
@@ -38,7 +44,10 @@ exports.createBodyIndexData = catchAsync(async (req, res) => {
     Temperature,
     TemperatureInF,
     timeMessure,
-    health_status,
+    heart_rate,
+    health_status1,
+    health_status2,
+    health_status3,
     userId,
   });
   res.send(data);
@@ -72,12 +81,35 @@ exports.getBodyIndexData = catchAsync(async (req, res) => {
       SpO2: 92,
       Temperature: 37.4,
       TemperatureInF: 96.8,
+      heart_rate: 80,
       ...body,
       Date: date,
     });
   }
 
   res.send(result);
+});
+exports.getBodyIndexDataTable = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const bodyData = await BodyIndexData.findAll({
+    where: {
+      userId,
+    },
+    raw: true,
+  });
+  res.send(bodyData);
+});
+exports.getBodyIndexDataTableById = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const { id } = req.params;
+  const bodyData = await BodyIndexData.findOne({
+    where: {
+      userId,
+      id,
+    },
+    raw: true,
+  });
+  res.send(bodyData);
 });
 exports.createBodyDiseases = catchAsync(async (req, res) => {
   const userId = req.user.id;
