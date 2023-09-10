@@ -10,17 +10,17 @@ module.exports = {
       },
       doctorId: {
         type: Sequelize.INTEGER,
-        references: {
-          model: "Users",
-          key: "id",
-        },
+        // references: {
+        //   model: "Users",
+        //   key: "id",
+        // },
       },
       patientId: {
         type: Sequelize.INTEGER,
-        references: {
-          model: "Users",
-          key: "id",
-        },
+        // references: {
+        //   model: "Users",
+        //   key: "id",
+        // },
       },
       bookingFrom: {
         type: Sequelize.DATE,
@@ -30,10 +30,10 @@ module.exports = {
       },
       bookingStatus: {
         type: Sequelize.INTEGER,
-        references: {
-          model: "BookingStatuses",
-          key: "id",
-        },
+        // references: {
+        //   model: "BookingStatuses",
+        //   key: "id",
+        // },
       },
       bookingValue: {
         type: Sequelize.BIGINT,

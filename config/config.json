@@ -1,23 +1,41 @@
 {
   "development": {
-    "username": "freedb_khuongduy",
-    "password": "DMTVVSQk@H3vm@!",
-    "database": "freedb_khuongduy",
-    "host": "sql.freedb.tech",
-    "dialect": "mysql"
+    "username": "zejrcheil2f80nygzu5q",
+    "password": "pscale_pw_DKPQBuzi3jdcHbIwkrI97r1Bbm28aJLXEbDdDmlZH3X",
+    "database": "dashboard",
+    "host": "aws.connect.psdb.cloud",
+    "dialect": "mysql",
+    "ssl": true,
+    "dialectOptions": {
+      "ssl": {
+        "require": true
+      }
+    }
   },
   "test": {
-    "username": "freedb_khuongduy",
-    "password": "DMTVVSQk@H3vm@!",
-    "database": "freedb_khuongduy",
-    "host": "sql.freedb.tech",
-    "dialect": "mysql"
+    "username": "zejrcheil2f80nygzu5q",
+    "password": "pscale_pw_DKPQBuzi3jdcHbIwkrI97r1Bbm28aJLXEbDdDmlZH3X",
+    "database": "dashboard",
+    "host": "aws.connect.psdb.cloud",
+    "dialect": "mysql",
+    "ssl": true,
+    "dialectOptions": {
+      "ssl": {
+        "require": true
+      }
+    }
   },
   "production": {
-    "username": "freedb_khuongduy",
-    "password": "DMTVVSQk@H3vm@!",
-    "database": "freedb_khuongduy",
-    "host": "sql.freedb.tech",
-    "dialect": "mysql"
+    "username": "zejrcheil2f80nygzu5q",
+    "password": "pscale_pw_DKPQBuzi3jdcHbIwkrI97r1Bbm28aJLXEbDdDmlZH3X",
+    "database": "dashboard",
+    "host": "aws.connect.psdb.cloud",
+    "dialect": "mysql",
+    "ssl": true,
+    "dialectOptions": {
+      "ssl": {
+        "require": true
+      }
+    }
   }
 }
