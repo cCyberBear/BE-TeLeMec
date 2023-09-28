@@ -76,6 +76,7 @@ const io = new Server(server, {
     ],
     methods: ["GET", "POST"],
   },
+  path: '/socket'
 });
 
 socketChat(io);
