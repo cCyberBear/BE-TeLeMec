@@ -68,6 +68,7 @@ app.get(
 app.use(catchError);
 
 const io = new Server(server, {
+  path: "/socket-kd",
   cors: {
     origin: [
       "http://localhost:3000",
@@ -76,7 +77,6 @@ const io = new Server(server, {
     ],
     methods: ["GET", "POST"],
   },
-  path: '/socket'
 });
 
 socketChat(io);
