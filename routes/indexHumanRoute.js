@@ -12,7 +12,7 @@ const {
 
 const router = express.Router();
 
-router.post("/", jwtAuth, createBodyIndexData);
+router.post("/", createBodyIndexData);
 router.get("/", jwtAuth, getBodyIndexData);
 router.get("/table", jwtAuth, getBodyIndexDataTable);
 router.get("/table/:id", jwtAuth, getBodyIndexDataTableById);

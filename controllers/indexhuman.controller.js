@@ -4,34 +4,38 @@ const ApiError = require("../utils/ApiError");
 const moment = require("moment");
 
 exports.createBodyIndexData = catchAsync(async (req, res) => {
-  const userId = req.user.id;
+  // const userId = req.user.id;
   const {
     DBP,
     SBP,
     Glucose,
     SpO2,
     Temperature,
-    TemperatureInF,
+    // TemperatureInF,
     timeMessure,
     heart_rate,
-    health_status1,
-    health_status2,
-    health_status3,
+    deviceId,
+    // health_status1,
+    // health_status2,
+    // health_status3,
   } = req.body;
 
   if (
     !(
-      DBP ||
-      SBP ||
-      Glucose ||
-      SpO2 ||
-      Temperature ||
-      TemperatureInF ||
-      timeMessure ||
-      heart_rate ||
-      health_status1 ||
-      health_status2 ||
-      health_status3
+      (
+        DBP ||
+        SBP ||
+        Glucose ||
+        SpO2 ||
+        Temperature ||
+        // TemperatureInF ||
+        timeMessure ||
+        heart_rate ||
+        deviceId
+      )
+      // health_status1 ||
+      // health_status2 ||
+      // health_status3
     )
   ) {
     throw new ApiError(500, "Something is missing");
@@ -42,13 +46,14 @@ exports.createBodyIndexData = catchAsync(async (req, res) => {
     Glucose,
     SpO2,
     Temperature,
-    TemperatureInF,
+    // TemperatureInF,
     timeMessure,
     heart_rate,
-    health_status1,
-    health_status2,
-    health_status3,
-    userId,
+    deviceId,
+    // health_status1,
+    // health_status2,
+    // health_status3,
+    userId: deviceId,
   });
   res.send(data);
 });
