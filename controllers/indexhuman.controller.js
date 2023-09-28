@@ -2,6 +2,7 @@ const catchAsync = require("../middlewares/async");
 const { BodyIndexData, BodyDiseases, Sequelize } = require("../models");
 const ApiError = require("../utils/ApiError");
 const moment = require("moment");
+const axios = require("axios");
 
 exports.createBodyIndexData = catchAsync(async (req, res) => {
   // const userId = req.user.id;
@@ -11,50 +12,50 @@ exports.createBodyIndexData = catchAsync(async (req, res) => {
     Glucose,
     SpO2,
     Temperature,
-    // TemperatureInF,
     timeMessure,
     heart_rate,
-    deviceId,
-    // health_status1,
-    // health_status2,
-    // health_status3,
+    userId,
   } = req.body;
 
   if (
     !(
-      (
-        DBP ||
-        SBP ||
-        Glucose ||
-        SpO2 ||
-        Temperature ||
-        // TemperatureInF ||
-        timeMessure ||
-        heart_rate ||
-        deviceId
-      )
-      // health_status1 ||
-      // health_status2 ||
-      // health_status3
+      DBP ||
+      SBP ||
+      Glucose ||
+      SpO2 ||
+      Temperature ||
+      timeMessure ||
+      heart_rate ||
+      userId
     )
   ) {
     throw new ApiError(500, "Something is missing");
   }
-  const data = await BodyIndexData.create({
+  const { data: predict } = await axios.post(`http://localhost:5000/advisor`, {
     DBP,
     SBP,
     Glucose,
     SpO2,
     Temperature,
-    // TemperatureInF,
     timeMessure,
     heart_rate,
-    deviceId,
-    // health_status1,
-    // health_status2,
-    // health_status3,
-    userId: deviceId,
+    TemperatureInF: 1.8 * Temperature + 32,
   });
+  const newValue = {
+    DBP,
+    SBP,
+    Glucose,
+    SpO2,
+    Temperature,
+    timeMessure,
+    heart_rate,
+    userId,
+    TemperatureInF: 1.8 * Temperature + 32,
+    health_status1: predict.nb_result,
+    health_status2: predict.rf_result,
+    health_status3: predict.svm_result,
+  };
+  const data = await BodyIndexData.create(newValue);
   res.send(data);
 });
 exports.getBodyIndexData = catchAsync(async (req, res) => {
@@ -119,9 +120,6 @@ exports.getBodyIndexDataTableById = catchAsync(async (req, res) => {
 exports.createBodyDiseases = catchAsync(async (req, res) => {
   const userId = req.user.id;
   const {
-    prediction1,
-    prediction2,
-    prediction3,
     abdominal_pain,
     abnormal_menstruation,
     acidity,
@@ -257,9 +255,6 @@ exports.createBodyDiseases = catchAsync(async (req, res) => {
 
   if (
     !(
-      prediction1 ||
-      prediction2 ||
-      prediction3 ||
       abdominal_pain ||
       abnormal_menstruation ||
       acidity ||
@@ -395,10 +390,15 @@ exports.createBodyDiseases = catchAsync(async (req, res) => {
   ) {
     throw new ApiError(500, "Something is missing");
   }
+
+  const { data: predict } = await axios.post(
+    `http://localhost:5000/disease`,
+    values
+  );
   const data = await BodyDiseases.create({
-    prediction1,
-    prediction2,
-    prediction3,
+    prediction1: predict.nb_result,
+    prediction2: predict.rf_result,
+    prediction3: predict.svm_result,
     abdominal_pain,
     abnormal_menstruation,
     acidity,
