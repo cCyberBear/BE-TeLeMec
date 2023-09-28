@@ -68,7 +68,6 @@ app.get(
 app.use(catchError);
 
 const io = new Server(server, {
-  path: "/socket-kd",
   cors: {
     origin: [
       "http://localhost:3000",
