@@ -31,16 +31,19 @@ exports.createBodyIndexData = catchAsync(async (req, res) => {
   ) {
     throw new ApiError(500, "Something is missing");
   }
-  const { data: predict } = await axios.post(`http://localhost:5000/advisor`, {
-    DBP,
-    SBP,
-    Glucose,
-    SpO2,
-    Temperature,
-    timeMessure,
-    heart_rate,
-    TemperatureInF: 1.8 * Temperature + 32,
-  });
+  const { data: predict } = await axios.post(
+    `https://telemec-ai-0492392b1017.herokuapp.com/advisor`,
+    {
+      DBP,
+      SBP,
+      Glucose,
+      SpO2,
+      Temperature,
+      timeMessure,
+      heart_rate,
+      TemperatureInF: 1.8 * Temperature + 32,
+    }
+  );
   const newValue = {
     DBP,
     SBP,
@@ -392,7 +395,7 @@ exports.createBodyDiseases = catchAsync(async (req, res) => {
   // }
 
   const { data: predict } = await axios.post(
-    `http://localhost:5000/disease`,
+    `https://telemec-ai-0492392b1017.herokuapp.com/disease`,
     req.body
   );
   const data = await BodyDiseases.create({
