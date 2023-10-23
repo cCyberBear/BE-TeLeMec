@@ -98,6 +98,58 @@ exports.getBodyIndexData = catchAsync(async (req, res) => {
 
   res.send(result);
 });
+exports.createBodyIndexData2 = catchAsync(async (req, res) => {
+  let {
+    DBP,
+    SBP,
+    Glucose,
+    SpO2,
+    Temperature,
+    HeartRate: heart_rate,
+    userId,
+  } = req.params;
+
+  if (!(DBP || SBP || Glucose || SpO2 || Temperature || heart_rate || userId)) {
+    throw new ApiError(500, "Something is missing");
+  }
+
+  DBP = +DBP;
+  SBP = +SBP;
+  Glucose = +Glucose;
+  SpO2 = +SpO2;
+  Temperature = +Temperature;
+  heart_rate = +heart_rate;
+  Temperature = +Temperature;
+
+  const { data: predict } = await axios.post(
+    `https://telemec-ai-0492392b1017.herokuapp.com/advisor`,
+    {
+      DBP,
+      SBP,
+      Glucose,
+      SpO2,
+      Temperature,
+      heart_rate,
+      TemperatureInF: 1.8 * Temperature + 32,
+    }
+  );
+  const newValue = {
+    DBP,
+    SBP,
+    Glucose,
+    SpO2,
+    Temperature,
+    timeMessure: moment(),
+    heart_rate,
+    userId,
+    TemperatureInF: 1.8 * Temperature + 32,
+    health_status1: predict.nb_result,
+    health_status2: predict.rf_result,
+    health_status3: predict.svm_result,
+  };
+  const data = await BodyIndexData.create(newValue);
+  res.send(data);
+});
 exports.getBodyIndexDataTable = catchAsync(async (req, res) => {
   const userId = req.user.id;
   const bodyData = await BodyIndexData.findAll({
