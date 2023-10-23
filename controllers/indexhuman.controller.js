@@ -107,7 +107,7 @@ exports.createBodyIndexData2 = catchAsync(async (req, res) => {
     Temperature,
     HeartRate: heart_rate,
     userId,
-  } = req.params;
+  } = req.query;
 
   if (!(DBP || SBP || Glucose || SpO2 || Temperature || heart_rate || userId)) {
     throw new ApiError(500, "Something is missing");
