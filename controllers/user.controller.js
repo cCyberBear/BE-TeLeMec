@@ -202,7 +202,13 @@ exports.getDoctorById = catchAsync(async (req, res) => {
 });
 
 exports.getAllDoctor = catchAsync(async (req, res) => {
-  const user = await User.findAll({
+  const { specialist } = req.query;
+  console.log(
+    "🚀 ~ file: user.controller.js:206 ~ exports.getAllDoctor=catchAsync ~ specialist:",
+    specialist
+  );
+
+  let user = await User.findAll({
     where: {
       isPatient: false,
     },
@@ -214,5 +220,13 @@ exports.getAllDoctor = catchAsync(async (req, res) => {
     ],
     attributes: ["id", "fullname", "image"],
   });
+  if (specialist !== "null") {
+    user = user.map((doc) => doc.dataValues);
+    user = user.filter(
+      (doc) =>
+        doc.details_doctor && doc.details_doctor.dataValues.skill === specialist
+    );
+  }
+
   res.status(200).json(user);
 });

@@ -101,6 +101,7 @@ exports.getAllBooking = catchAsync(async (req, res) => {
 
   res.json(data);
 });
+
 exports.getAllBookingByDoctorId = catchAsync(async (req, res) => {
   const { doctorId } = req.params;
 
