@@ -143,10 +143,11 @@ exports.createBodyIndexData2 = catchAsync(async (req, res) => {
     timeMessure: moment(),
     heart_rate,
     userId,
-    TemperatureInF: 1.8 * Temperature + 32,
+    TemperatureInF: +(1.8 * Temperature + 32).toFixed(2),
     health_status1: predict.rf_result,
-    health_status2: predict.nb_result,
-    health_status3: predict.svm_result,
+    health_status2: predict.dt_result,
+    health_status3: predict.nb_result,
+    health_status4: predict.svm_result,
   };
   const data = await BodyIndexData.create(newValue);
   res.send(data);
