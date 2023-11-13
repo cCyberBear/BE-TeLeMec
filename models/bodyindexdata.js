@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       health_status1: DataTypes.INTEGER,
       health_status2: DataTypes.INTEGER,
       health_status3: DataTypes.INTEGER,
+      health_status4: DataTypes.INTEGER,
       userId: DataTypes.INTEGER,
     },
     {
